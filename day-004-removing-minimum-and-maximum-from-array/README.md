@@ -1,0 +1,111 @@
+# Removing Minimum and Maximum From Array
+
+Difficulty: Medium
+Topic: Array, Greedy
+LeetCode: https://leetcode.com/problems/removing-minimum-and-maximum-from-array/
+
+## Problem
+
+You are given a 0-indexed array of distinct integers nums.
+
+There is an element in nums that has the lowest value and an element that has the highest value. We call them the minimum and maximum respectively. Your goal is to remove both these elements from the array.
+
+A deletion is defined as either removing an element from the front of the array or removing an element from the back of the array.
+
+Return the minimum number of deletions it would take to remove both the minimum and maximum element from the array.
+
+ 
+
+Example 1:
+
+Input: nums = [2,10,7,5,4,1,8,6]
+Output: 5
+Explanation:
+The minimum element in the array is nums[5], which is 1.
+The maximum element in the array is nums[1], which is 10.
+We can remove both the minimum and maximum by removing 2 elements from the front and 3 elements from the back.
+This results in 2 + 3 = 5 deletions, which is the minimum number possible.
+
+Example 2:
+
+Input: nums = [0,-4,19,1,8,-2,-3,5]
+Output: 3
+Explanation:
+The minimum element in the array is nums[1], which is -4.
+The maximum element in the array is nums[2], which is 19.
+We can remove both the minimum and maximum by removing 3 elements from the front.
+This results in only 3 deletions, which is the minimum number possible.
+
+Example 3:
+
+Input: nums = [101]
+Output: 1
+Explanation:
+There is only one element in the array, which makes it both the minimum and maximum element.
+We can remove it with 1 deletion.
+
+ 
+
+Constraints:
+
+- 1 <= nums.length <= 105
+
+- -105 <= nums[i] <= 105
+
+- The integers in nums are distinct.
+
+## Approach
+
+Find the indices of the minimum and maximum elements in one pass. There are only three sensible strategies to remove both: delete everything up through the later of the two indices from the front, delete everything from the earlier of the two indices to the end from the back, or delete the earlier index's prefix from the front and the later index's suffix from the back. Take the minimum deletions among these three.
+
+**Brute-force alternative:** Simulate all possible splits: for every combination of front-count and back-count that together cover both the min and max index, sum them and take the minimum — this is essentially O(n) already if done naively by scanning, but a truly brute approach of trying every (left, right) pair of deletion counts is O(n^2), which is unnecessary since only 3 distinct deletion strategies are ever optimal.
+
+## Algorithm
+
+1. Find index i of the minimum value and index j of the maximum value in nums.
+2. Let lo = min(i, j) and hi = max(i, j), and n = len(nums).
+3. Option A: remove both by deleting from the front only, costing hi + 1 deletions.
+4. Option B: remove both by deleting from the back only, costing n - lo deletions.
+5. Option C: remove the earlier one from the front (lo + 1 deletions) and the later one from the back (n - hi deletions), summing them.
+6. Return the minimum of the three option costs.
+
+## Complexity
+
+Time: O(n)
+Space: O(1)
+
+## Edge Cases
+
+- Single-element array: min and max are the same index, answer is 1.
+- Min and max adjacent to each other at either end.
+- Min and max are the two boundary elements (index 0 and n-1) — both_ends dominates.
+- Min or max already at index 0 or n-1, minimizing one of the two single-direction options.
+
+## Tests
+
+7/7 passed
+
+## Key Learning
+
+Greedy reduction: an apparently combinatorial removal problem collapses to just 3 candidate strategies once you reason about index positions.; Thinking in terms of prefix/suffix boundaries instead of simulating deletions directly.; Recognizing when only the extremes (min/max) matter, letting you ignore the rest of the array's values entirely.; Comparing a small fixed set of candidate answers rather than searching an exponential space.
+
+## Review
+
+Score: 8.8/10
+
+Strengths:
+- Correctly identifies and evaluates all three viable deletion strategies (front-only, back-only, both-ends)
+- Clean, minimal variable naming (lo/hi/from_front/from_back/both_ends) that mirrors the reasoning directly
+- Correctly handles the case where min and max coincide (n=1 or all-equal arrays)
+- O(n) time, O(1) extra space as claimed
+
+Weaknesses:
+- Uses nums.index(min(nums)) and nums.index(max(nums)), which is four separate O(n) scans (min, max, then two index lookups) rather than the 'one pass' described — a single loop tracking running min/max indices would match the stated approach and halve the constant factor
+
+**A possibly better approach:** Track min/max value and their indices in a single explicit loop instead of chaining min()/max()/index() calls, to actually achieve the described one-pass behavior.
+
+Key takeaway: When removing two target elements from an array, only three deletion boundaries are ever worth comparing: trim from the front, trim from the back, or trim both ends around them.
+
+---
+
+*Generated by DSA Daily Agent. This solution was prepared automatically; submitting it on LeetCode is always a manual step.*
